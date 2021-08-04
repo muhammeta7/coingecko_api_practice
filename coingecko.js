@@ -1,15 +1,50 @@
-// Import coingecko-api
 const axios = require('axios');
 const CoinGecko = require('coingecko-api');
-let GATEIO_BASE_URL = "https://data.gateapi.io/api2";
-const request = require('request');
+const GATEIO_BASE_URL = "https://data.gateapi.io/api2";
 
-// Initiate the CoinGecko API Client
-const CoinGeckoClient = new CoinGecko();
+const getGateTradingPairs = async () => {
+    let result = '';
+    const response = await axios.get(GATEIO_BASE_URL + "/1/pairs");
+    result = JSON.stringify(response.data);
+    result.slice(0,result.length-1).split(',');
+    // console.log(result);
+    return result;
+}
+
+getGateTradingPairs();
+
+const createTradingPairArray = async () => {
+    const pairsString = await getGateTradingPairs();
+    return pairsString.slice(1, pairsString.length + 1).split(',')
+}
+
+createTradingPairArray().then( res => console.log(res));
+
+const parseRandomGateTradingPair = async () => {
+    let arr = await createTradingPairArray();
+    const len = arr.length;
+    const result = arr[Math.floor(Math.random() * len)];
+    // const result = arr.length;
+    return result.split("_");
+}
+
+// console.log(parseRandomGateTradingPair());
+
+
+const separatePair = async () => {
+    let response = await parseRandomGateTradingPair();
+    let result = [response[0], response[1]];
+    console.log(result);
+    return result;
+}
+
+// TODO get any pair randomly
+// TODO Parse data to split by _
+
+
 // initialize empty array to copy CoinGecko coin list into
-let coins = [];
-let coin = ""; // initialize coin string to get more data
-
+// let coins = [];
+// let coin = ""; // initialize coin string to get more data
 
 // Make call for coin list and select token at random
 // const selectRandomCoin = async() => {
@@ -36,37 +71,24 @@ let coin = ""; // initialize coin string to get more data
 //         .then(data => console.log(data.data))
 // }
 // getTradingPair('usd');
-let gateTickers = [];
-const getExchangeTickersByVolumeDesc = async() => {
-     // Creates copy of coin list array w/ length of 8779
+// let gateTickers = [];
+// const getExchangeTickersByVolumeDesc = async() => {
+    // Creates copy of coin list array w/ length of 8779
     // coin = coins[Math.floor(Math.random() * coins.length)].id; // set random coin variable
     // await selectRandomCoin();
-    let data = await CoinGeckoClient.exchanges.fetchTickers(
-        'gate',
-        {
+    // let data = await CoinGeckoClient.exchanges.fetchTickers(
+    //     'gate',
+    //     {
             // vs_currency: 'usd',
             // coin_ids: coin,
-            order: "volume_desc",
-            page: 5,
+            // order: "volume_desc",
+            // page: 5,
             // exchange_ids: exchanges.list(),
             // sparkline: false,
             // price_change_percentage: "24h"
-        }).then( data =>  console.log(JSON.stringify(data)))
+        // }).then( data =>  console.log(JSON.stringify(data)))
 
 
-}
+// }
 
 // getExchangeTickersByVolumeDesc();
-
-const getGateTradingPairs = () => {
-    let pairs = '';
-    axios.get(GATEIO_BASE_URL + "/1/pairs")
-        .then(res => {
-            pairs = JSON.stringify(res.data);
-            console.log(pairs.slice(1,pairs.length-1).split(','));
-        });
-}
-
-getGateTradingPairs();
-
-
