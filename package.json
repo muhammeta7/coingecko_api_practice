@@ -12,6 +12,7 @@
   "dependencies": {
     "async": "^3.2.0",
     "axios": "^0.21.1",
-    "coingecko-api": "^1.0.10"
+    "coingecko-api": "^1.0.10",
+    "request": "^2.88.2"
   }
 }
