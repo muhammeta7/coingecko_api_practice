@@ -7,36 +7,37 @@ const getGateTradingPairs = async () => {
     const response = await axios.get(GATEIO_BASE_URL + "/1/pairs");
     result = JSON.stringify(response.data);
     result.slice(0,result.length-1).split(',');
-    // console.log(result);
     return result;
 }
 
-getGateTradingPairs();
+// const createTradingPairArray = async () => {
+//     const pairsString = await getGateTradingPairs();
+//     let pairs = '';
+//     pairs = pairsString.slice(1, pairsString.length + 1).split(',');
+//     return pairs;
+// }
+//
+// createTradingPairArray();
+//
+// const parseRandomGateTradingPair = async () => {
+//     let arr = await createTradingPairArray();
+//     console.log("This is the array --->   "  + arr);
+//     const len = arr.length;
+//     const result = arr[Math.floor(Math.random() * len)];
+//     console.log("=======================");
+//     console.log(result);
+//     console.log("=======================");
+//     return result.split("_");
+// }
 
-const createTradingPairArray = async () => {
-    const pairsString = await getGateTradingPairs();
-    return pairsString.slice(1, pairsString.length + 1).split(',')
-}
+// const separatePair = async () => {
+//     let response = await parseRandomGateTradingPair();
+//     let result = [response[0], response[1]];
+//     console.log("This is the result  --->   " + result);
+//     return result;
+// }
 
-createTradingPairArray().then( res => console.log(res));
-
-const parseRandomGateTradingPair = async () => {
-    let arr = await createTradingPairArray();
-    const len = arr.length;
-    const result = arr[Math.floor(Math.random() * len)];
-    // const result = arr.length;
-    return result.split("_");
-}
-
-// console.log(parseRandomGateTradingPair());
-
-
-const separatePair = async () => {
-    let response = await parseRandomGateTradingPair();
-    let result = [response[0], response[1]];
-    console.log(result);
-    return result;
-}
+// console.log(JSON.stringify(separatePair()));
 
 // TODO get any pair randomly
 // TODO Parse data to split by _
