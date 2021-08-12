@@ -1,24 +1,33 @@
 const axios = require('axios');
-const Papa = require('papaparse');
 const CoinGecko = require('coingecko-api');
+const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 
 const CoinGeckoClient = new CoinGecko();
 
-let coinList;
-// Convert back to CSV
-
-let coinIds;
+const csvWriter = createCsvWriter({
+    // Add path to store local files
+    path: '',
+    header: [
+        {id: 'id', title: 'Coin_ID'},
+        // Each header will establish your columns
+        // {id: 'symbol', title: 'ticker'},
+        // {id: 'name', title: 'name'},
+    ]
+});
 
 const getCoinList = async () => {
     return CoinGeckoClient.coins.list();
-
 }
 
-getCoinList()
-    .then( resp => {
-        coinList = JSON.stringify(resp.data);
-    })
-    .then( () => console.log(coinList));
+const writeCsv = async () => {
+    getCoinList().then(
+        resp => {
+            csvWriter.writeRecords(resp.data);
+        }
+    )
+}
+
+writeCsv().then( () => console.log("Check the data folder!"));
 
 
 
