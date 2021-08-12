@@ -1,5 +1,4 @@
 const axios = require('axios');
-const CoinGecko = require('coingecko-api');
 
 const GATEIO_BASE_URL = "https://data.gateapi.io/api2/1/pairs";
 let gatePairs;

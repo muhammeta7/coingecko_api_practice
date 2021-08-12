@@ -6,17 +6,21 @@ const CoinGeckoClient = new CoinGecko();
 
 let coinList;
 // Convert back to CSV
-var csv;
 
+let coinIds;
 
 const getCoinList = async () => {
-    coinList = await CoinGeckoClient.coins.all();
-    return coinList;
+    return CoinGeckoClient.coins.list();
+
 }
 
-getCoinList().then( () => console.log(coinList));
+getCoinList()
+    .then( resp => {
+        coinList = JSON.stringify(resp.data);
+    })
+    .then( () => console.log(coinList));
 
-getCoinList().then( () => console.log(coinList));
+
 
 // JSON.parse(response.data)
 // curl -X 'GET' \
