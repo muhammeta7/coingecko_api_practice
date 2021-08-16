@@ -51,9 +51,12 @@ const displayTickerFields = (someList) => {
     }
 }
 
+// selectRandomCoinId().then( () => fetchCoin())
+//     .then( resp => { coinTickerData = resp.data.tickers})
+//     .then( () => displayTickerFields(coinTickerData));
+
+
 selectRandomCoinId().then( () => fetchCoin())
-    .then( resp => { coinTickerData = resp.data.tickers} )
-    .then( () => displayTickerFields(coinTickerData)
-);
-
-
+    .then( resp => { coinTickerData = resp.data.tickers})
+    .then( () => displayTickerFields(coinTickerData))
+    .then();
