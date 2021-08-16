@@ -2,8 +2,9 @@ const CoinGecko = require('coingecko-api');
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 const CoinGeckoClient = new CoinGecko();
 
+let coinList;
 
-export const getCoinIds = async () => {
+const getCoinIds = () => {
     return CoinGeckoClient.coins.list();
 }
 
@@ -26,4 +27,14 @@ const writeCsv = async () => {
         }
     );
 }
+
+let coinId = "";
+const selectRandomCoinId = async () => {
+    let coins = await getCoinIds();
+    coins = coins.data.slice(); // Creates copy of coin list array w/ length of 8779
+    coinId = coins[Math.floor(Math.random() * coins.length)].id; // set random coin variable
+    return coinId;
+};
+
+selectRandomCoinId().then(() => console.log(coinId));
 
