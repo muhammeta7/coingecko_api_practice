@@ -32,8 +32,8 @@ let coinId = "";
 
 const selectRandomCoinId = async () => {
     coins = await getCoinIds();
-    coins = coins.data.slice(); // Creates copy of coin list array w/ length of 8779
-    coinId = coins[Math.floor(Math.random() * coins.length)].id; // set random coin variable
+    const coinsList = coins.data.slice(); // Creates copy of coin list array w/ length of 8779
+    coinId = coinsList[Math.floor(Math.random() * coinsList.length)].id; // set random coin variable
     console.log(coinId);
     return coinId;
 };
@@ -42,21 +42,30 @@ const fetchCoin = () => {
     return CoinGeckoClient.coins.fetchTickers(coinId);
 }
 
+
+// TODO Create an object but only copy over fields for table
+
 let coinTickerData;
-const displayTickerFields = (someList) => {
-    let i = 0;
-    while( i < someList.length ){
-        console.log(someList[i]);
-        i++;
-    }
+let coinTickers;
+
+
+// TODO converted_volume.usd or [1]
+// const filteredKeys = ['name','coin_id', "target_coin_id", 'base', 'target', 'market', 'volume', 'converted_volume', 'trust_score', "is_anomaly", "timestamp", "is_stale"]
+// const filteredKeys = ["last", "cost_to_move_up_usd", "cost_to_move_down_usd", "converted_last", "bid_ask_spread_percentage", "last_traded_at", "last_fetch_at", "trade_url", "token_info_url"]
+const displayTickerFields = (listOfTickers) => {
+    return listOfTickers.map(ticker => Object.assign({}, ticker));
 }
 
-// selectRandomCoinId().then( () => fetchCoin())
-//     .then( resp => { coinTickerData = resp.data.tickers})
-//     .then( () => displayTickerFields(coinTickerData));
 
 
-selectRandomCoinId().then( () => fetchCoin())
-    .then( resp => { coinTickerData = resp.data.tickers})
-    .then( () => displayTickerFields(coinTickerData))
+
+console.log(subset)
+selectRandomCoinId().then(() => fetchCoin())
+    .then( resp => {
+        coinTickerData = resp.data.tickers;
+    })
+    .then(() => {
+        coinTickers = displayTickerFields(coinTickerData)
+    })
+    .then(() => console.log(coinTickers))
 ;
