@@ -1,5 +1,7 @@
 const CoinGecko = require('coingecko-api');
+const {createObjectCsvStringifier, createObjectCsvWriter} = require("csv-writer");
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
+
 const CoinGeckoClient = new CoinGecko();
 
 // Get coin list from coin gecko api and return for later use
@@ -26,7 +28,7 @@ const parseCoinIds = (arr) => {
     return gateCoins;
 }
 
-const filteredKeys = ["converted_last", "last", "is_anomaly", "is_stale", "bid_ask_spread_percentage", "cost_to_move_up_usd", "cost_to_move_down_usd", "bid_ask_spread_percentage", "last_traded_at", "last_fetch_at", "trade_url", "token_info_url"]
+const filteredKeys = ["converted_last", "is_anomaly", "is_stale", "bid_ask_spread_percentage", "cost_to_move_up_usd", "cost_to_move_down_usd", "bid_ask_spread_percentage", "last_traded_at", "last_fetch_at", "trade_url", "token_info_url"]
 
 const filteredDataKeys = (data) => {
     data.forEach((e) => {
@@ -48,13 +50,13 @@ const fetchCoinTickerData = (coinId) => {
 const csvWriter = createCsvWriter({
         path: '',
         header: [
-
+            {id: 'coin_id', title: 'Coin_Id'},
             {id: 'base', title: 'Base'},
             {id: 'target', title: 'Target'},
-            {id: 'coin_id', title: 'Coin_Id'},
+            {id: 'target_coin_id', title: 'Target_Coin_ID'},
             // TODO Market
             {id: 'market', title: 'Market'},
-            {id: 'target_coin_id', title: 'Target_Coin_ID'},
+            {id: 'last', title: "Last"},
             {id: 'volume', title: 'Volume'},
             {id: 'converted_volume', title: 'Converted_Volume'},
             {id: 'trust_score', title: 'Trust_Score'},
@@ -68,11 +70,13 @@ const csvWriter = createCsvWriter({
 const writeCsv = async () => {
     fetchCoinTickerData("cardano").then(
         resp => {
-            csvWriter.writeRecords(filteredDataKeys(resp.data.tickers));
+            csvWriter.writeRecords(resp.data.tickers);
         }
     );
 }
 
+
+writeCsv();
 
 
 

@@ -7,10 +7,25 @@ const fetchGateCoinIds = () => {
 }
 
 
+let gateCoins;
+fetchGateCoinIds().then( resp => { gateCoins = parseCoinIds(resp.data.tickers) }).then(
+    () => {
+        console.log(gateCoins);
+    });
+
+// generates list of only Gate coin_id's from CoinGecko
+const parseCoinIds = (arr) => {
+    let gateCoins = [];
+    for(let coin in arr){
+        gateCoins.push(arr[coin]['coin_id'])
+    }
+    return gateCoins;
+}
+
 const filteredKeys = ["market", "last", "volume", "converted_last", "converted_volume", "trust_score", "bid_ask_spread_percentage", "timestamp", "last_traded_at", "last_fetch_at","is_anomaly", "is_stale", "trade_url", "token_info_url"]
 
 const displayInfo = (data) => {
-    data.forEach( (e) => {
+    filteredKeys.forEach( (e) => {
         deleteKeys(e);
     })
     return data;
@@ -23,7 +38,7 @@ const deleteKeys = (obj) => {
 const csvWriter = createCsvWriter( {
     path: '',
     header:  [
-        {id: 'name', title: "Exchange ID"},
+        {id: 'name', title: "Name"},
         {id: 'base', title: 'Base'},
         {id: 'target', title: 'Target'},
         {id: 'coin_id', title: 'Coin_Id'},
