@@ -2,69 +2,81 @@ const CoinGecko = require('coingecko-api');
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 const CoinGeckoClient = new CoinGecko();
 
+// Get coin list from coin gecko api and return for later use
 const getCoinIds = () => {
     return CoinGeckoClient.coins.list();
 }
 
-let coinId = "";
-
-const selectRandomCoinId = async () => {
-    let coins = await getCoinIds();
-    const coinsList = coins.data.slice(); // Creates copy of coin list array w/ length of 8779
-    coinId = coinsList[Math.floor(Math.random() * coinsList.length)].id; // set random coin variable
-    console.log(coinId);
-    return coinId;
-};
-
-const fetchCoinTickerData = () => {
-    return CoinGeckoClient.coins.fetchTickers(coinId);
+const fetchGateCoinIds = () => {
+    return CoinGeckoClient.exchanges.fetchTickers('gate');
 }
 
+let gateCoins;
+fetchGateCoinIds().then( resp => { gateCoins = parseCoinIds(resp.data.tickers) }).then(
+    (index) => {
+    console.log(gateCoins);
+});
 
-let coinTickerData;
-const filteredKeys = ["last", "cost_to_move_up_usd", "cost_to_move_down_usd", "converted_last", "bid_ask_spread_percentage", "last_traded_at", "last_fetch_at", "trade_url", "token_info_url"]
+// generates list of only Gate coin_id's from CoinGecko
+const parseCoinIds = (arr) => {
+    let gateCoins = [];
+    for(let coin in arr){
+        gateCoins.push(arr[coin]['coin_id'])
+    }
+    return gateCoins;
+}
 
-const displayInfo = (data) => {
-    data.forEach( (e) => {
+const filteredKeys = ["converted_last", "last", "is_anomaly", "is_stale", "bid_ask_spread_percentage", "cost_to_move_up_usd", "cost_to_move_down_usd", "bid_ask_spread_percentage", "last_traded_at", "last_fetch_at", "trade_url", "token_info_url"]
+
+const filteredDataKeys = (data) => {
+    data.forEach((e) => {
         deleteKeys(e);
     })
     return data;
 }
 
 const deleteKeys = (obj) => {
-    return filteredKeys.forEach(e => delete obj[e]);
+    return filteredKeys.forEach(e => {
+        delete obj[e]
+    });
 }
 
-selectRandomCoinId().then( () => fetchCoinTickerData())
-    .then( resp => {
-        coinTickerData = resp.data.tickers;
-        console.log("Name: " + resp.data.name)
-    }).then( () => console.log(displayInfo(coinTickerData)));
+const fetchCoinTickerData = (coinId) => {
+   return CoinGeckoClient.coins.fetchTickers(coinId);
+}
 
-
-
-
-const csvWriter = createCsvWriter( {
+const csvWriter = createCsvWriter({
         path: '',
-        header:  [
-            {id: 'id', title: 'Coin_ID'},
-            {id: 'symbol', title: 'ticker'},
-            {id: 'name', title: 'name'}
-        ]
-    });
-    // Add path to save to local machine Update empty '<Your path/coingecko_api_practice/src/coinGecko/data> + nameOfFile.csv'
-    // <{id: 'jsonData properties...', title: 'Excel sheet column name'},{id: 'id2', title:'Column2'}>
+        header: [
 
+            {id: 'base', title: 'Base'},
+            {id: 'target', title: 'Target'},
+            {id: 'coin_id', title: 'Coin_Id'},
+            // TODO Market
+            {id: 'market', title: 'Market'},
+            {id: 'target_coin_id', title: 'Target_Coin_ID'},
+            {id: 'volume', title: 'Volume'},
+            {id: 'converted_volume', title: 'Converted_Volume'},
+            {id: 'trust_score', title: 'Trust_Score'},
+            {id: 'timestamp', title: 'Timestamp'},
+            {id: 'is_anomaly', title: 'Is_Anomaly'},
+            {id: 'is_stale', title: 'Is_Stale'}
+        ]
+    }
+);
 
 const writeCsv = async () => {
-    getCoinIds().then(
+    fetchCoinTickerData("cardano").then(
         resp => {
-            csvWriter.writeRecords(resp.data);
+            csvWriter.writeRecords(filteredDataKeys(resp.data.tickers));
         }
     );
 }
 
-// writeCsv().then(() => console.log('Nice I wrote a csv from json data!'));
+
+
+
+
 
 
 
